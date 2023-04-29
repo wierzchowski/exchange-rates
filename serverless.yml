@@ -1,0 +1,26 @@
+service: exchange-rates
+
+frameworkVersion: '3'
+
+package:
+  patterns:
+    - "!node_modules/**"
+    - "src/**"
+
+provider:
+  name: aws
+  runtime: python3.10
+  versionFunctions: false
+
+
+functions:
+  show_rates:
+    handler: src.show_rates.handler.handle
+    name: ${self:service}-show-rates
+    description: Handler providing exchange rates
+    memorySize: 512
+    timeout: 29
+    events:
+      - http:
+          method: GET
+          path: /rates
