@@ -8,5 +8,5 @@ def handle(event: dict, context: LambdaContext) -> dict:
         "isBase64Encoded": False,
         "statusCode": 200,
         "headers": {},
-        "body": json.dumps({"some": "values"})
+        "body": json.dumps({"some": "values"}),
     }
