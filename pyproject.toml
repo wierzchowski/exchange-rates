@@ -8,6 +8,7 @@ packages = [{include = "exchange_rates"}]
 
 [tool.poetry.dependencies]
 python = "3.10.*"
+aws-lambda-powertools = "^2.14.1"
 
 
 [tool.poetry.group.dev.dependencies]

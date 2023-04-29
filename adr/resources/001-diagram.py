@@ -17,9 +17,9 @@ with Diagram(name="Currency rates", filename="001-diagram", show=False):
 
     with Cluster("AWS"):
         apigw = APIGateway("HTTP API")
-        apigw_lambda = Lambda("show_rates")
-        event_lambda = Lambda("fetch rates \n(triggered daily)")
-        dynamo = Dynamodb("Currency storage")
+        apigw_lambda = Lambda("exchange-rates-show-rates")
+        event_lambda = Lambda("exchange-rates-fetch-rates \n(triggered daily)")
+        dynamo = Dynamodb("exchange-rates-rates-table")
 
     user << apigw >> apigw_lambda << dynamo
     user >> apigw << apigw_lambda

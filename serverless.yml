@@ -3,24 +3,31 @@ service: exchange-rates
 frameworkVersion: '3'
 
 package:
+  excludeDevDependencies: true
   patterns:
     - "!node_modules/**"
+    - "!adr/**"
+    - "!serverless/"
     - "src/**"
+    - "**.json"
 
 provider:
   name: aws
   runtime: python3.10
   versionFunctions: false
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:PutItem
+          Resource:
+            - "Fn::GetAtt": [ratesTable, Arn]
 
+plugins:
+  - serverless-python-requirements
 
-functions:
-  show_rates:
-    handler: src.show_rates.handler.handle
-    name: ${self:service}-show-rates
-    description: Handler providing exchange rates
-    memorySize: 512
-    timeout: 29
-    events:
-      - http:
-          method: GET
-          path: /rates
+custom: ${file(./serverless/custom.yml)}
+functions: ${file(./serverless/functions.yml)}
+resources: ${file(./serverless/resources.yml)}

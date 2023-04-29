@@ -1,0 +1,10 @@
+pythonRequirements:
+  userPoetry: true
+  noDeploy:
+    - isort
+    - black
+    - diagrams
+  layer:
+    name: ${self:service}-PythonLayer
+    compatibleRuntimes:
+      - python3.10
