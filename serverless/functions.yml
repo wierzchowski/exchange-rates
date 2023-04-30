@@ -10,6 +10,9 @@ showRates:
     - http:
         method: GET
         path: /rates
+        caching:
+          enabled: true
+
 storeRates:
   handler: src.handlers.store_rates.handle
   name: ${self:service}-store-rates
@@ -20,4 +23,9 @@ storeRates:
     - Ref: PythonRequirementsLambdaLayer
   events:
     - schedule: cron(30 14 ? * MON-FRI *)
-
+  environment:
+    APIGW_ID:
+      Fn::GetAtt:
+        - ApiGatewayRestApi
+        - RestApiId
+    APIGW_STAGE: ${self:provider.stage}

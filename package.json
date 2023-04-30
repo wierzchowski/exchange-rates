@@ -4,9 +4,8 @@
   "requires": true,
   "packages": {},
   "dependencies": {
-    "serverless": "^3.30.1"
-  },
-  "devDependencies": {
+    "serverless": "^3.30.1",
+    "serverless-api-gateway-caching": "^1.10.1",
     "serverless-python-requirements": "^6.0.0"
   }
 }

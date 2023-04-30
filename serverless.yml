@@ -11,6 +11,7 @@ package:
 provider:
   name: aws
   runtime: python3.10
+  stage: dev
   versionFunctions: false
   iam:
     role:
@@ -21,9 +22,14 @@ provider:
             - dynamodb:PutItem
           Resource:
             - "Fn::GetAtt": [ratesTable, Arn]
+        - Effect: Allow
+          Action:
+            - apigateway:DELETE
+          Resource: !Sub arn:aws:apigateway:${AWS::Region}::/restapis/${ApiGatewayRestApi.RestApiId}/stages/${self:provider.stage}/cache/data
 
 plugins:
   - serverless-python-requirements
+  - serverless-api-gateway-caching
 
 custom: ${file(./serverless/custom.yml)}
 functions: ${file(./serverless/functions.yml)}

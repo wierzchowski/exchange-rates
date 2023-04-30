@@ -1,3 +1,6 @@
+import os
+
+import boto3
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from kink import inject
@@ -33,4 +36,12 @@ def handle(
         logger.debug(f"{rates.rates = }")
         rates_storage.put_rates(rates.date, rates.rates)
     logger.info("Rates successfully stored")
+
+    apigw_client = boto3.client('apigateway')
+    response = apigw_client.flush_stage_cache(
+        restApiId=os.environ.get("APIGW_ID"),
+        stageName=os.environ.get("APIGW_STAGE")
+    )
+    print(response)
+
     return f"Successfully loaded {limit} item(s)"

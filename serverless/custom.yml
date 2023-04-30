@@ -8,3 +8,10 @@ pythonRequirements:
     name: ${self:service}-PythonLayer
     compatibleRuntimes:
       - python3.10
+
+apiGatewayCaching:
+  enabled: true
+  ttlInSeconds: 3600
+  perKeyInvalidation:
+    requireAuthorization: false
+    handleUnauthorizedRequests: Ignore
