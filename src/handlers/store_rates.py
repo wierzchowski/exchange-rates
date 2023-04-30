@@ -14,13 +14,14 @@ def handle(
     logger: Logger,
     rates_storage: RatesStorage,
     ecb_http_client: EcbHttpClient,
-) -> None:
+) -> str:
+    logger.set_correlation_id(context.aws_request_id)
+
     if event.get("limit") and isinstance(event.get("limit"), int):
         limit = event.get("limit")
     else:
         limit = 1
 
-    logger.set_correlation_id(context.aws_request_id)
     logger.info("Fetching rates")
     xml_rates = ecb_http_client.get_current_rates_info()
     logger.info("Extracting rates")
@@ -32,3 +33,4 @@ def handle(
         logger.debug(f"{rates.rates = }")
         rates_storage.put_rates(rates.date, rates.rates)
     logger.info("Rates successfully stored")
+    return f"Successfully loaded {limit} item(s)"

@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from xml.etree import ElementTree as ET
 from xml.etree.ElementTree import Element, ParseError
 
@@ -6,12 +5,7 @@ from aws_lambda_powertools import Logger
 from kink import inject
 
 from src.errors import ErrorParsingXMLData
-
-
-@dataclass
-class DailyRate:
-    date: str
-    rates: dict
+from src.helpers.models import DailyRate
 
 
 class EcbXmlExtractor:

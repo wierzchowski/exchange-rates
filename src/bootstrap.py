@@ -11,5 +11,5 @@ def bootstrap_di() -> None:
     di["logger"] = Logger("exchange-rates", "INFO")
     di["http_client"] = requests
     di["dynamodb_resource"] = lambda _: boto3.resource("dynamodb")
-    di["ecb_http_client"] = EcbHttpClient()
-    di["rates_storage"] = lambda _: RatesStorage()
+    di[EcbHttpClient] = EcbHttpClient()
+    di[RatesStorage] = lambda _: RatesStorage()

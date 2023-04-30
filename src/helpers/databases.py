@@ -2,6 +2,7 @@ import json
 
 from aws_lambda_powertools import Logger
 from boto3 import resource
+from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 from kink import inject
 
@@ -16,6 +17,14 @@ class RatesStorage:
             "exchange-rates-rates-table"
         )  # TODO: can be prettier: sls output -> Lambda envs -> os.environ
         self.logger = logger
+
+    def get_newest_rates(self, limit: int = 1) -> list[dict]:
+        response = self.table.query(
+            KeyConditionExpression=Key("kind").eq("rates"),
+            Limit=2,
+            ScanIndexForward=False,
+        )
+        return response["Items"]
 
     def put_rates(self, rates_date: str, rates: dict) -> None:
         try:

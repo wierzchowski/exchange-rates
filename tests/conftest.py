@@ -1,5 +1,6 @@
 import json
 import os
+from dataclasses import dataclass
 from unittest.mock import Mock
 
 import boto3
@@ -10,7 +11,7 @@ from moto import mock_dynamodb
 
 from src.helpers.databases import RatesStorage
 from src.helpers.http import EcbHttpClient
-from src.helpers.xml import DailyRate
+from src.helpers.models import DailyRate
 
 
 @pytest.fixture
@@ -19,9 +20,8 @@ def ecb_http_client() -> EcbHttpClient:
 
 
 @pytest.fixture
-def rates_storage(dynamodb_mocks) -> RatesStorage:
-    client, resource = dynamodb_mocks
-    return RatesStorage(resource)
+def rates_storage(dynamodb_resource) -> RatesStorage:
+    return RatesStorage(dynamodb_resource)
 
 
 @pytest.fixture
@@ -29,13 +29,13 @@ def aws_credentials():
     """Mocked AWS Credentials for moto."""
     os.environ["AWS_ACCESS_KEY_ID"] = "testing"
     os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
-    os.environ["AWS_DEFAULT_REGION"] = "testing"
+    os.environ["AWS_DEFAULT_REGION"] = "eu-west-1"
     os.environ["AWS_SECURITY_TOKEN"] = "testing"
     os.environ["AWS_SESSION_TOKEN"] = "testing"
 
 
 @pytest.fixture
-def dynamodb_mocks(currencies_dict, aws_credentials):
+def dynamodb_resource(currencies_dict, aws_credentials):
     with mock_dynamodb():
         client = boto3.client("dynamodb", region_name="eu-west-1")
         resource = boto3.resource("dynamodb", region_name="eu-west-1")
@@ -52,16 +52,8 @@ def dynamodb_mocks(currencies_dict, aws_credentials):
                 {"AttributeName": "date", "KeyType": "RANGE"},
             ],
         )
-        table = resource.Table("exchange-rates-rates-table")
-        table.put_item(
-            Item={
-                "kind": "rates",
-                "date": "2000-01-01",
-                "rates": json.dumps(currencies_dict),
-            }
-        )
 
-        yield client, resource
+        yield resource
 
 
 @pytest.fixture
@@ -90,3 +82,12 @@ def xml_rates() -> str:
 		</Cube>
 	</Cube>
 </gesmes:Envelope>"""
+
+
+@pytest.fixture
+def lambda_context():
+    @dataclass
+    class LambdaContext:
+        aws_request_id: str = "88888888-4444-4444-4444-121212121212"
+
+    return LambdaContext()

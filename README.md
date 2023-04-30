@@ -10,7 +10,15 @@ for all the tracked currencies.
 
 This project is based on [poetry](https://python-poetry.org/) and [serverless framework](https://www.serverless.com/).
 
-`serverless deploy --region eu-west-1`
+```commandline
+serverless deploy --region eu-west-1
+```
+
+Fill database with the latest records:
+
+```commandline
+serverless invoke -f storeRates --data '{"limit": 5}' --region eu-west-1
+```
 
 ### Caveats
 
