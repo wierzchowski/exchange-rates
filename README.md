@@ -11,3 +11,8 @@ for all the tracked currencies.
 This project is based on [poetry](https://python-poetry.org/) and [serverless framework](https://www.serverless.com/).
 
 `serverless deploy --region eu-west-1`
+
+### Caveats
+
+`Store events` Lambda function partially bases on event received. If triggered with empty event - reloads only newest 
+rates from ECB, however if `limit` passed in an event - such amount of days is being loaded into DynamoDB.

@@ -1,4 +1,4 @@
-show_rates:
+showRates:
   handler: src.handlers.show_rates.handle
   name: ${self:service}-show-rates
   description: Handler providing exchange rates
@@ -10,7 +10,7 @@ show_rates:
     - http:
         method: GET
         path: /rates
-store_rates:
+storeRates:
   handler: src.handlers.store_rates.handle
   name: ${self:service}-store-rates
   description: Handler fetching currency rates from ECB

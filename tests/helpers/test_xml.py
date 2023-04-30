@@ -1,17 +1,18 @@
 import pytest
 
 from src.errors import ErrorParsingXMLData
-from src.helpers.xml import parse_xml_rates
+from src.helpers.xml import EcbXmlExtractor
 
 
-def test_xml(xml_rates, currencies_dict):
-    date, currencies = parse_xml_rates(xml_rates)
+def test_xml(xml_rates, currencies_dict, daily_rate):
+    extractor = EcbXmlExtractor(xml_rates)
+    rates_list = extractor.get_currency_data()
 
-    assert currencies == currencies_dict
+    assert rates_list == [daily_rate]
 
 
 @pytest.mark.parametrize(
-    "string,error",
+    "invalid_xml_rates,error",
     (
         (
             "dummy string",
@@ -23,6 +24,7 @@ def test_xml(xml_rates, currencies_dict):
         ),
     ),
 )
-def test_xml_invalid_input(xml_rates, string, error):
+def test_xml_invalid_input(invalid_xml_rates, error):
     with pytest.raises(error):
-        parse_xml_rates(string)
+        extractor = EcbXmlExtractor(invalid_xml_rates)
+        extractor.get_currency_data()

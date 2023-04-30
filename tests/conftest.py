@@ -1,4 +1,5 @@
 import json
+import os
 from unittest.mock import Mock
 
 import boto3
@@ -8,12 +9,13 @@ from aws_lambda_powertools import Logger
 from moto import mock_dynamodb
 
 from src.helpers.databases import RatesStorage
-from src.helpers.http import ECBHttpClient
+from src.helpers.http import EcbHttpClient
+from src.helpers.xml import DailyRate
 
 
 @pytest.fixture
-def ecb_http_client() -> ECBHttpClient:
-    return ECBHttpClient(logger=Mock(spec_set=Logger), http_client=requests)
+def ecb_http_client() -> EcbHttpClient:
+    return EcbHttpClient(logger=Mock(spec_set=Logger), http_client=requests)
 
 
 @pytest.fixture
@@ -23,10 +25,20 @@ def rates_storage(dynamodb_mocks) -> RatesStorage:
 
 
 @pytest.fixture
-def dynamodb_mocks(currencies_dict):
+def aws_credentials():
+    """Mocked AWS Credentials for moto."""
+    os.environ["AWS_ACCESS_KEY_ID"] = "testing"
+    os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
+    os.environ["AWS_DEFAULT_REGION"] = "testing"
+    os.environ["AWS_SECURITY_TOKEN"] = "testing"
+    os.environ["AWS_SESSION_TOKEN"] = "testing"
+
+
+@pytest.fixture
+def dynamodb_mocks(currencies_dict, aws_credentials):
     with mock_dynamodb():
-        client = boto3.client("dynamodb")
-        resource = boto3.resource("dynamodb")
+        client = boto3.client("dynamodb", region_name="eu-west-1")
+        resource = boto3.resource("dynamodb", region_name="eu-west-1")
 
         client.create_table(
             TableName="exchange-rates-rates-table",  # TODO: can be prettier: sls output -> Lambda envs -> os.environ
@@ -53,6 +65,16 @@ def dynamodb_mocks(currencies_dict):
 
 
 @pytest.fixture
+def daily_rate(currencies_dict) -> DailyRate:
+    return DailyRate(date="2023-04-28", rates=currencies_dict)
+
+
+@pytest.fixture
+def currencies_dict() -> dict:
+    return {"USD": 1.0981, "GBP": 0.8805, "PLN": 4.5815}
+
+
+@pytest.fixture
 def xml_rates() -> str:
     return """<?xml version="1.0" encoding="UTF-8"?>
 <gesmes:Envelope xmlns:gesmes="http://www.gesmes.org/xml/2002-08-01" xmlns="http://www.ecb.int/vocabulary/2002-08-01/eurofxref">
@@ -68,8 +90,3 @@ def xml_rates() -> str:
 		</Cube>
 	</Cube>
 </gesmes:Envelope>"""
-
-
-@pytest.fixture
-def currencies_dict() -> dict:
-    return {"USD": 1.0981, "GBP": 0.8805, "PLN": 4.5815}

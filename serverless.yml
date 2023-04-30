@@ -5,11 +5,8 @@ frameworkVersion: '3'
 package:
   excludeDevDependencies: true
   patterns:
-    - "!node_modules/**"
-    - "!adr/**"
-    - "!serverless/"
+    - "!./**/**"
     - "src/**"
-    - "**.json"
 
 provider:
   name: aws

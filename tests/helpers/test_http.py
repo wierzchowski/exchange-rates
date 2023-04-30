@@ -5,8 +5,8 @@ import requests
 import responses
 from requests.exceptions import ConnectionError, HTTPError
 
+from src.constants import EBC_RATES_URL
 from src.errors import ErrorFetchingXMLData
-from src.helpers.http import EBC_RATES_URL
 
 
 @responses.activate
