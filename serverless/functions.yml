@@ -18,3 +18,6 @@ storeRates:
   timeout: 120
   layers:
     - Ref: PythonRequirementsLambdaLayer
+  events:
+    - schedule: cron(30 14 ? * MON-FRI *)
+
