@@ -1,0 +1,40 @@
+openapi: 3.0.3
+info:
+  title: ECB exchange rates - OpenAPI 3.0
+  version: 1.0.0
+paths:
+  /dev/rates:
+    get:
+      summary: Get exchange rates
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rates_date:
+                    type: string
+                    format: date
+                    example: 2023-04-30
+                  rates_diff_date:
+                    nullable: true
+                    type: string
+                    format: date
+                    example: 2023-04-30
+                  rates:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        rate:
+                          type: number
+                          example: 1.0981
+                        diff:
+                          nullable: true
+                          type: number
+                          example: -0.0061
+                    example: {"USD": {"rate": 1.0981, "diff": -0.0061}, "GBP": {"rate": 0.8805, "diff": -0.0038}, "PLN": {"rate": 4.5815, "diff": -0.0085}}
+        '204':
+          description: No rates to show
