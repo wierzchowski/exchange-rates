@@ -6,8 +6,10 @@ from kink import inject
 
 from src.helpers.databases import RatesStorage
 from src.helpers.models import DailyRate
+from src.observability import tracer
 
 
+@tracer.capture_lambda_handler(capture_response=False)
 @inject
 def handle(
     event: dict, context: LambdaContext, logger: Logger, rates_storage: RatesStorage

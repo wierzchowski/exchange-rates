@@ -1,4 +1,4 @@
-from xml.etree import ElementTree as ET
+from defusedxml import ElementTree as ET
 from xml.etree.ElementTree import Element, ParseError
 
 from aws_lambda_powertools import Logger

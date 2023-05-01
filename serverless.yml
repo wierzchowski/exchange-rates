@@ -13,6 +13,8 @@ provider:
   runtime: python3.10
   stage: dev
   versionFunctions: false
+  tracing:
+    lambda: true
   iam:
     role:
       statements:

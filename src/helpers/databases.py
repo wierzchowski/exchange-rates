@@ -6,6 +6,7 @@ from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 from kink import inject
 
+from src.observability import tracer
 from src.errors import DynamoDBError
 
 
@@ -18,6 +19,7 @@ class RatesStorage:
         )  # TODO: can be prettier: sls output -> Lambda envs -> os.environ
         self.logger = logger
 
+    @tracer.capture_method(capture_response=True)
     def get_newest_rates(self, limit: int = 1) -> list[dict]:
         response = self.table.query(
             KeyConditionExpression=Key("kind").eq("rates"),
@@ -26,6 +28,7 @@ class RatesStorage:
         )
         return response["Items"]
 
+    @tracer.capture_method(capture_response=True)
     def put_rates(self, rates_date: str, rates: dict) -> None:
         try:
             response = self.table.put_item(
