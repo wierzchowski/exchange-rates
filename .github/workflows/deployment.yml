@@ -3,8 +3,8 @@ name: Deploy Serverless Framework to AWS
 on:
   push:
     branches: [ master ]
-#    tags:
-#      - '[0-9]*.[0-9]*.[0-9]*'
+    tags:
+      - '[0-9]*.[0-9]*.[0-9]*'
 
 env:
   NODEJS_VERSION: '18'
