@@ -54,7 +54,7 @@ jobs:
     - name: Install Dependencies
       if: steps.poetry-cache-env.outputs.cache-hit != 'true'
       run: |
-        poetry install
+        poetry install --no-root
 
     - name: Run tests
       run: |
