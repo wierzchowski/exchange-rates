@@ -4,9 +4,14 @@ Currency exchange tracking application in the AWS lambda environment.  The appli
 [European Central Bank Data](https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html). 
 Exchange rates are fetched every day and stored in a DynamoDB table. The application exposes a public REST API endpoint 
 that provides current exchange rate information for all tracked currencies and their change compared to the previous day 
-for all the tracked currencies.
+for all the tracked currencies. Data provided is cached in API Gateway, however after each successful data fetch
+cache is flushed.
 
 ### Architecture
+
+API endpoint is served using serverless infrastructure (API Gateway + Lambda + DynamoDB) and data is loaded using Lambda
+function that is run on daily basis using CloudWatch (EventBridge) Rule. API Gateway cache is turned on, so only first 
+call is served from Lambda and DynamoDB.
 
 ![Resources diagram](adr/resources/001-diagram.png "Resources diagram")
 
@@ -26,6 +31,12 @@ And install npm dependencies:
 
 ```commandline
 npm install
+```
+
+Activate poetry env:
+
+```commandline
+poetry shell
 ```
 
 ### Deployment

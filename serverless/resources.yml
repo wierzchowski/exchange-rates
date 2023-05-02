@@ -14,3 +14,29 @@ Resources:
         - AttributeName: date
           KeyType: RANGE
       TableName: ${self:service}-rates-table
+  storeRatesCronTrigger:
+    Type: AWS::Events::Rule
+    Properties:
+      EventBusName: default
+      Name: ${self:service}-store-rates-cron
+      ScheduleExpression: cron(10 14 ? * MON-FRI *)
+      State: ENABLED
+      Targets:
+        - Id: storeRatesSchedule
+          Arn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-store-rates
+          Input: |-
+            {
+              "limit": 1,
+              "type": "daily-cron"
+            }
+          DeadLetterConfig:
+            Arn: !Sub arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:${self:service}-store-rates-dlq
+          RetryPolicy:
+            MaximumRetryAttempts: 5
+            MaximumEventAgeInSeconds: 21600
+
+  storeRatesDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: ${self:service}-store-rates-dlq
+      MessageRetentionPeriod: 1209600  # 14 days

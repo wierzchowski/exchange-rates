@@ -4,7 +4,7 @@
 # cd adr/resources
 # python3 001-diagram.py
 
-from diagrams import Cluster, Diagram
+from diagrams import Cluster, Diagram, Edge
 from diagrams.aws.compute import Lambda
 from diagrams.aws.database import Dynamodb
 from diagrams.aws.network import APIGateway
@@ -21,8 +21,8 @@ with Diagram(name="Currency rates", filename="001-diagram", show=False):
         fetch_lambda = Lambda("exchange-rates-fetch-rates \n(triggered daily)")
         dynamo = Dynamodb("exchange-rates-rates-table")
 
-    user << apigw >> show_lambda << dynamo
-    user >> apigw << show_lambda
+    user >> apigw >> show_lambda << dynamo
+    user << Edge(label="cache") << apigw << show_lambda
 
     ecb << fetch_lambda >> dynamo
     ecb >> fetch_lambda

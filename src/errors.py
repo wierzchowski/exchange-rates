@@ -8,3 +8,7 @@ class ErrorParsingXMLData(Exception):
 
 class DynamoDBError(Exception):
     pass
+
+
+class NoNewRatesError(Exception):
+    pass

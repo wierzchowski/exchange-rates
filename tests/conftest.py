@@ -25,17 +25,18 @@ def rates_storage(dynamodb_resource) -> RatesStorage:
 
 
 @pytest.fixture
-def aws_credentials():
+def env_vars_with_aws_credentials():
     """Mocked AWS Credentials for moto."""
     os.environ["AWS_ACCESS_KEY_ID"] = "testing"
     os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
     os.environ["AWS_DEFAULT_REGION"] = "eu-west-1"
     os.environ["AWS_SECURITY_TOKEN"] = "testing"
     os.environ["AWS_SESSION_TOKEN"] = "testing"
+    os.environ["APIGW_CACHED"] = "false"
 
 
 @pytest.fixture
-def dynamodb_resource(currencies_dict, aws_credentials):
+def dynamodb_resource(currencies_dict, env_vars_with_aws_credentials):
     with mock_dynamodb():
         client = boto3.client("dynamodb", region_name="eu-west-1")
         resource = boto3.resource("dynamodb", region_name="eu-west-1")
@@ -77,7 +78,12 @@ def xml_rates() -> str:
 	<Cube>
 		<Cube time='2023-04-28'>
 			<Cube currency='USD' rate='1.0981'/>
-			<Cube currency='GBP' rate='0.88050'/>
+			<Cube currency='GBP' rate='0.8805'/>
+			<Cube currency='PLN' rate='4.5815'/>
+		</Cube>
+		<Cube time='2023-04-27'>
+			<Cube currency='USD' rate='1.0911'/>
+			<Cube currency='GBP' rate='0.8905'/>
 			<Cube currency='PLN' rate='4.5815'/>
 		</Cube>
 	</Cube>
