@@ -36,7 +36,11 @@ def handle(
     extracted_rates = extractor.get_currency_data(limit=limit)
     logger.info("Storing rates")
 
-    if extracted_rates and extracted_rates[0].date != str(date.today()) and event.get("type") == "daily-cron":
+    if (
+        extracted_rates
+        and extracted_rates[0].date != str(date.today())
+        and event.get("type") == "daily-cron"
+    ):
         description = "Daily fetched rates did not return today's rates"
         logger.error(description)
         raise NoNewRatesError(description)
