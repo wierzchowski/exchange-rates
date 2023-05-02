@@ -5,10 +5,10 @@ from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from kink import inject
 
-from src.observability import tracer
 from src.helpers.databases import RatesStorage
 from src.helpers.http import EcbHttpClient
 from src.helpers.xml import EcbXmlExtractor
+from src.observability import tracer
 
 
 @tracer.capture_lambda_handler(capture_response=False)
@@ -39,14 +39,15 @@ def handle(
         rates_storage.put_rates(rates.date, rates.rates)
     logger.info("Rates successfully stored")
 
-    if os.environ.get("APIGW_CACHED"):
+    if os.environ.get("APIGW_CACHED").lower() == "true":
         logger.info("Invalidating API Gateway cache")
-        apigw_client = boto3.client('apigateway')
+        apigw_client = boto3.client("apigateway")
         response = apigw_client.flush_stage_cache(
             restApiId=os.environ.get("APIGW_ID"),
-            stageName=os.environ.get("APIGW_STAGE")
+            stageName=os.environ.get("APIGW_STAGE"),
         )
         logger.info(response)
         logger.info("API Gateway cache invalidated")
 
+    logger.info(f"Successfully loaded {limit} item(s)")
     return f"Successfully loaded {limit} item(s)"

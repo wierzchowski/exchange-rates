@@ -13,15 +13,16 @@ from diagrams.onprem.compute import Server
 
 with Diagram(name="Currency rates", filename="001-diagram", show=False):
     user = Client("User")
-    ebc = Server("EBC")
+    ecb = Server("ECB")
 
     with Cluster("AWS"):
         apigw = APIGateway("HTTP API")
-        apigw_lambda = Lambda("exchange-rates-show-rates")
-        event_lambda = Lambda("exchange-rates-fetch-rates \n(triggered daily)")
+        show_lambda = Lambda("exchange-rates-show-rates")
+        fetch_lambda = Lambda("exchange-rates-fetch-rates \n(triggered daily)")
         dynamo = Dynamodb("exchange-rates-rates-table")
 
-    user << apigw >> apigw_lambda << dynamo
-    user >> apigw << apigw_lambda
+    user << apigw >> show_lambda << dynamo
+    user >> apigw << show_lambda
 
-    ebc << event_lambda >> dynamo
+    ecb << fetch_lambda >> dynamo
+    ecb >> fetch_lambda

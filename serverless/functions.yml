@@ -29,3 +29,4 @@ storeRates:
         - ApiGatewayRestApi
         - RestApiId
     APIGW_STAGE: ${self:provider.stage}
+    APIGW_CACHED: true

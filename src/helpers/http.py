@@ -3,9 +3,9 @@ from logging import Logger
 import requests
 from kink import inject
 
-from src.observability import tracer
 from src.constants import EBC_RATES_URL
 from src.errors import ErrorFetchingXMLData
+from src.observability import tracer
 
 
 class HttpClient:
@@ -33,7 +33,7 @@ class EcbHttpClient(HttpClient):
     def __init__(self, logger: Logger, http_client: requests) -> None:
         super().__init__(logger=logger, http_client=http_client)
 
-    @tracer.capture_method(capture_response=True)
+    @tracer.capture_method(capture_response=False)
     def get_current_rates_info(self) -> str:
         response = self.make_request(method="GET", url=EBC_RATES_URL)
         return response.text

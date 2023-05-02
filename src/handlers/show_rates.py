@@ -38,7 +38,7 @@ def prepare_response(body: str = None, status_code: int = 200) -> dict:
     return {
         "isBase64Encoded": False,
         "statusCode": status_code,
-        "headers": {},
+        "headers": {"Content-Type": "application/json"},
         "body": body,
     }
 

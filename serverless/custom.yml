@@ -10,7 +10,7 @@ pythonRequirements:
       - python3.10
 
 apiGatewayCaching:
-  enabled: false
+  enabled: true
   ttlInSeconds: 3600
   perKeyInvalidation:
     requireAuthorization: false

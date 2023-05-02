@@ -6,8 +6,8 @@ from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 from kink import inject
 
-from src.observability import tracer
 from src.errors import DynamoDBError
+from src.observability import tracer
 
 
 class RatesStorage:

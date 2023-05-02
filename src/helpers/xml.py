@@ -1,7 +1,7 @@
-from defusedxml import ElementTree as ET
 from xml.etree.ElementTree import Element, ParseError
 
 from aws_lambda_powertools import Logger
+from defusedxml import ElementTree as ET
 from kink import inject
 
 from src.errors import ErrorParsingXMLData
@@ -27,6 +27,11 @@ class EcbXmlExtractor:
                     rates=self._extract_currencies(element),
                 )
             )
+
+        if not rates:
+            description = "No exchange rates data fetched"
+            self.logger.error(description)
+            raise ErrorParsingXMLData(description)
         return rates
 
     def _get_root(self) -> Element:
@@ -52,4 +57,9 @@ class EcbXmlExtractor:
         return node.attrib["time"]
 
     def _get_namespace(self) -> dict[str, str]:
-        return {"ns": self.root.findall("*")[-1].tag.split("}")[0][1:]}
+        try:
+            return {"ns": self.root.findall("*")[-1].tag.split("}")[0][1:]}
+        except IndexError as e:
+            description = "No valid namespace available in xml document"
+            self.logger.error(description)
+            raise ErrorParsingXMLData(description) from e
